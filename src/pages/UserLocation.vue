@@ -10,6 +10,7 @@
                 type="text"
                 placeholder="Enter your address"
                 v-model="address"
+                id="autocomplete"
               />
               <i class="dot circle link icon" @click="locatorButtonPressed"></i>
             </div>
@@ -31,6 +32,17 @@ export default {
       error: "",
       spinner: false,
     };
+  },
+
+  mounted() {
+    new google.maps.places.Autocomplete(
+       document.getElementById("autocomplete"),
+       {
+         bounds: new google.maps.LatLngBounds(
+           new google.maps.LatLng(33.10317, -96.67055)
+         )
+       }
+    )
   },
 
   methods: {
@@ -89,5 +101,24 @@ export default {
 .dot.circle.icon {
   background-color: #ff5a5f;
   color: white;
+}
+
+.pac-icon {
+  display: none;
+}
+
+.pac-item {
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.pac-item:hover {
+  background-color: #ececec;
+}
+
+
+.pac-item-query {
+  font-size: 16px;
 }
 </style>
