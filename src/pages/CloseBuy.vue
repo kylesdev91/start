@@ -28,10 +28,10 @@
 
               <div class="field">
                 <select v-model="radius">
-                  <option value="3">3 MI</option>
-                  <option value="6">6 MI</option>
-                  <option value="9">9 MI</option>
-                  <option value="12">12 MI</option>
+                  <option value="3">5 MI</option>
+                  <option value="6">10 MI</option>
+                  <option value="9">15 MI</option>
+                  <option value="12">20 MI</option>
                 </select>
               </div>
             </div>
@@ -42,6 +42,17 @@
           </button>
         </div>
       </form>
+
+      <div class="ui segment">
+        <div class="ui divided items">
+          <div class="item" v-for="place in places" :key="place.id">
+            <div class="content">
+              <div class="header">{{ place.name }}</div>
+              <div class="meta">{{ place.vicinity }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="ten wide column blue"></div>
   </div>
@@ -60,7 +71,8 @@ export default {
       lat: 0,
       lng: 0,
       type: "",
-      radius: ""
+      radius: "",
+      places: []
     };
   },
 
@@ -143,13 +155,14 @@ export default {
     findCloseBuyButtonPressed() {
       const URL = `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${
         this.lat
-      },${this.lng}&type=${this.type}&radius=${this.radius * 0.62}&key=${
+      },${this.lng}&type=${this.type}&radius=${this.radius * 1609}&key=${
         this.apiKey
       }`;
 
       axios
         .get(URL)
         .then(response => {
+          this.places = response.data.results;
           console.log(response);
         })
         .catch(error => {
