@@ -43,7 +43,7 @@
         </div>
       </form>
 
-      <div class="ui segment">
+      <div class="ui segment" style="max-height:500px;overflow:auto;">
         <div class="ui divided items">
           <div class="item" v-for="place in places" :key="place.id">
             <div class="content">
@@ -54,7 +54,7 @@
         </div>
       </div>
     </div>
-    <div class="ten wide column blue"></div>
+    <div class="ten wide column blue" ref="map"></div>
   </div>
 </template>
 
@@ -155,7 +155,7 @@ export default {
     findCloseBuyButtonPressed() {
       const URL = `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${
         this.lat
-      },${this.lng}&type=${this.type}&radius=${this.radius * 1609}&key=${
+      },${this.lng}&type=${this.type}&radius=${this.radius * 1000}&key=${
         this.apiKey
       }`;
 
@@ -163,11 +163,29 @@ export default {
         .get(URL)
         .then(response => {
           this.places = response.data.results;
+          this.showPlacesOnMap();
           console.log(response);
         })
         .catch(error => {
           this.error = error.message;
         });
+    },
+    showPlacesOnMap() {
+      const map = new google.maps.Map(this.$refs["map"], {
+        zoom: 15,
+        center: new google.maps.LatLng(this.lat, this.lng),
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      });
+
+      for (let i = 0; i < this.places.length; i++) {
+        const lat = this.places[i].geometry.location.lat;
+        const lng = this.places[i].geometry.location.lng;
+
+        const marker = new google.maps.Marker({
+          position: new google.maps.LatLng(lat, lng),
+          map: map
+        });
+      }
     }
   }
 };
