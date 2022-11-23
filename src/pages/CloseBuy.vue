@@ -65,14 +65,11 @@ export default {
   },
 
   mounted() {
-     new google.maps.places.Autocomplete(
-      this.$refs["autocomplete"],
-      {
-        bounds: new google.maps.LatLngBounds(
-          new google.maps.LatLng(33.10317, -96.67055)
-        )
-      }
-    );
+    new google.maps.places.Autocomplete(this.$refs["autocomplete"], {
+      bounds: new google.maps.LatLngBounds(
+        new google.maps.LatLng(33.10317, -96.67055)
+      )
+    });
   },
 
   methods: {
@@ -122,7 +119,6 @@ export default {
             console.log(response.data.error_message);
           } else {
             this.address = response.data.results[0].formatted_address;
-            console.log(response.data.results[0].formatted_address);
           }
           this.spinner = false;
         })
@@ -145,10 +141,20 @@ export default {
       });
     },
     findCloseBuyButtonPressed() {
-      console.log(this.lat);
-      console.log(this.lng);
-      console.log(this.type);
-      console.log(this.radius);
+      const URL = `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${
+        this.lat
+      },${this.lng}&type=${this.type}&radius=${this.radius * 0.62}&key=${
+        this.apiKey
+      }`;
+
+      axios
+        .get(URL)
+        .then(response => {
+          console.log(response);
+        })
+        .catch(error => {
+          this.error = error.message;
+        });
     }
   }
 };
