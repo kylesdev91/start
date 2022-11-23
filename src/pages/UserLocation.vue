@@ -121,6 +121,9 @@ export default {
         center: new google.maps.LatLng(latitude, longitude),
         mapTypeId: google.maps.MapTypeId.ROADMAP
       });
+
+      const infoWindow = new google.maps.InfoWindow();
+
       // Add Marker
       new google.maps.Marker({
         position: new google.maps.LatLng(latitude, longitude),
