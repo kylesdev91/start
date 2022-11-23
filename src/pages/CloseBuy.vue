@@ -1,37 +1,49 @@
 <template>
-  <div>
-    <section
-      class="ui two column centered grid"
-      style="position:relative;z-index:1;"
-    >
-      <div class="column">
-        <form class="ui segment large form">
-          <div class="ui message red" v-show="error">{{ error }}</div>
-          <div class="ui segment">
-            <div class="field">
-              <div
-                class="ui right icon input large"
-                :class="{ loading: spinner }"
-              >
-                <input
-                  type="text"
-                  placeholder="Enter your address"
-                  v-model="address"
-                  id="autocomplete"
-                />
-                <i
-                  class="dot circle link icon"
-                  @click="locatorButtonPressed"
-                ></i>
+  <div class="ui grid">
+    <div class="six wide column red">
+      <form class="ui segment large form">
+        <div class="ui message red" v-show="error">{{ error }}</div>
+        <div class="ui segment">
+          <div class="field">
+            <div
+              class="ui right icon input large"
+              :class="{ loading: spinner }"
+            >
+              <input
+                type="text"
+                placeholder="Enter your address"
+                v-model="address"
+                id="autocomplete"
+              />
+              <i class="dot circle link icon" @click="locatorButtonPressed"></i>
+            </div>
+          </div>
+          <div class="field">
+            <div class="two fields">
+              <div class="field">
+                <select v-model="type">
+                  <option value="restaurant">Restaurant</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <select v-model="radius">
+                  <option value="3">3 MI</option>
+                  <option value="6">6 MI</option>
+                  <option value="9">9 MI</option>
+                  <option value="12">12 MI</option>
+                </select>
               </div>
             </div>
-            <button class="ui button">Go</button>
           </div>
-        </form>
-      </div>
-    </section>
 
-    <section id="map"></section>
+          <button class="ui button" @click="findCloseBuyButtonPressed">
+            Find CloseBuy Places
+          </button>
+        </div>
+      </form>
+    </div>
+    <div class="ten wide column blue"></div>
   </div>
 </template>
 
@@ -43,23 +55,24 @@ export default {
     return {
       address: "",
       error: "",
-      spinner: false
+      spinner: false,
+      apiKey: "AIzaSyCTzd3EuoCv43xqDh43u65f0s6Jk5kjK_4",
+      lat: 0,
+      lng: 0,
+      type: "",
+      radius: ""
     };
   },
 
   mounted() {
-    let autocomplete = new google.maps.places.Autocomplete(
-      document.getElementById("autocomplete"),
+     new google.maps.places.Autocomplete(
+      this.$refs["autocomplete"],
       {
         bounds: new google.maps.LatLngBounds(
           new google.maps.LatLng(33.10317, -96.67055)
         )
-      });
-      autocomplete.addListener("place_changed", () => {
-        let place = autocomplete.getPlace();
-        console.log(place);
-        this.showUserLocationOnTheMap(place.geometry.location.lat(), place.geometry.location.lng())
-      })
+      }
+    );
   },
 
   methods: {
@@ -68,6 +81,9 @@ export default {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           position => {
+            (this.lat = position.coords.latitude),
+              (this.lng = position.coords.longitude);
+
             this.getAddressFrom(
               position.coords.latitude,
               position.coords.longitude
@@ -97,7 +113,8 @@ export default {
             lat +
             "," +
             long +
-            "&key=AIzaSyCTzd3EuoCv43xqDh43u65f0s6Jk5kjK_4"
+            "&key=" +
+            this.apiKey
         )
         .then(response => {
           if (response.data.error_message) {
@@ -125,7 +142,13 @@ export default {
       new google.maps.Marker({
         position: new google.maps.LatLng(latitude, longitude),
         map: map
-      })
+      });
+    },
+    findCloseBuyButtonPressed() {
+      console.log(this.lat);
+      console.log(this.lng);
+      console.log(this.type);
+      console.log(this.radius);
     }
   }
 };
