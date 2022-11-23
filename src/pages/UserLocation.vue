@@ -54,16 +54,16 @@ export default {
         .get(
           "https://maps.googleapis.com/maps/api/geocode/json?latlng=" +
             lat +
-            ",reieirrie" +
+            "," +
             long +
-            "&key=AIzaSyCTzd3EuoCv4erkjjekekr3xqDh43u65f0s6Jrejkejk5kjK_4"
+            "&key=AIzaSyCTzd3EuoCv43xqDh43u65f0s6Jk5kjK_4"
         )
         .then(response => {
           if (response.data.error_message) {
             console.log(response.data.error_message);
           } else {
             this.address = response.data.results[0].formatted_address;
-            // console.log(response.data.results[0].formatted_address);
+            console.log(response.data.results[0].formatted_address);
           }
         })
         .catch(error => {
