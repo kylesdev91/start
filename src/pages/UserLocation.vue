@@ -6,7 +6,11 @@
         <div class="ui segment">
           <div class="field">
             <div class="ui right icon input large">
-              <input type="text" placeholder="Enter your address" />
+              <input
+                type="text"
+                placeholder="Enter your address"
+                v-model="address"
+              />
               <i class="dot circle link icon" @click="locatorButtonPressed"></i>
             </div>
           </div>
@@ -18,14 +22,24 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
+  data() {
+    return {
+      address: ""
+    };
+  },
+
   methods: {
     locatorButtonPressed() {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           position => {
-            console.log(position.coords.latitude);
-            console.log(position.coords.longitude);
+            this.getAddressFrom(
+              position.coords.latitude,
+              position.coords.longitude
+            );
           },
           error => {
             console.log(error.message);
@@ -34,6 +48,27 @@ export default {
       } else {
         console.log("Your browser does not support geolocation API");
       }
+    },
+    getAddressFrom(lat, long) {
+      axios
+        .get(
+          "https://maps.googleapis.com/maps/api/geocode/json?latlng=" +
+            lat +
+            ",reieirrie" +
+            long +
+            "&key=AIzaSyCTzd3EuoCv4erkjjekekr3xqDh43u65f0s6Jrejkejk5kjK_4"
+        )
+        .then(response => {
+          if (response.data.error_message) {
+            console.log(response.data.error_message);
+          } else {
+            this.address = response.data.results[0].formatted_address;
+            // console.log(response.data.results[0].formatted_address);
+          }
+        })
+        .catch(error => {
+          console.log(error.message);
+        });
     }
   }
 };
