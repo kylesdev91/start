@@ -54,7 +54,7 @@
         </div>
       </div>
     </div>
-    <div class="ten wide column blue" ref="map"></div>
+    <div class="ten wide column" ref="map"></div>
   </div>
 </template>
 
@@ -182,16 +182,37 @@ export default {
       for (let i = 0; i < this.places.length; i++) {
         const lat = this.places[i].geometry.location.lat;
         const lng = this.places[i].geometry.location.lng;
+        const placeID = this.places[i].place_id;
 
         const marker = new google.maps.Marker({
           position: new google.maps.LatLng(lat, lng),
           map: map
         });
 
-
         google.maps.event.addListener(marker, "click", () => {
-          infoWindow.setContent(`<div class="ui header">${this.places[i].name}</div>`);
-          infoWindow.open(map, marker);
+          const URL = `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/details/json?key=${this.apiKey}&place_id=${placeID}`;
+
+          axios
+            .get(URL)
+            .then(response => {
+              if (response.data.error_message) {
+                this.error = response.data.error_message;
+              } else {
+                const place = response.data.result;
+
+                infoWindow.setContent(
+                  `<div class="ui header">${place.name}</div>
+                    ${place.formatted_address} <br>
+                    ${place.formatted_phone_number} <br>
+                    <a href="${place.website}" target="_blank">${place.website}</a>
+                  `
+                );
+                infoWindow.open(map, marker);
+              }
+            })
+            .catch(error => {
+              this.error = error.message;
+            });
         });
       }
     }
