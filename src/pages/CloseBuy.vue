@@ -50,7 +50,7 @@
             v-for="(place, index) in places"
             :key="place.id"
             @click="showInfoWindow(index)"
-            :class="{'active' : activeIndex === index}"
+            :class="{ active: activeIndex === index }"
             style="padding: 10px;"
           >
             <div class="content">
@@ -199,6 +199,11 @@ export default {
         });
 
         this.markers.push(marker);
+
+        new markerClusterer.MarkerClusterer({
+          map,
+          markers: this.markers
+        });
 
         google.maps.event.addListener(marker, "click", () => {
           const URL = `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/details/json?key=${this.apiKey}&place_id=${placeID}`;
