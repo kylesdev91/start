@@ -28,10 +28,10 @@
 
               <div class="field">
                 <select v-model="radius">
-                  <option value="3">5 MI</option>
-                  <option value="6">10 MI</option>
-                  <option value="9">15 MI</option>
-                  <option value="12">20 MI</option>
+                  <option value="5">5 MI</option>
+                  <option value="10">10 MI</option>
+                  <option value="15">15 MI</option>
+                  <option value="20">20 MI</option>
                 </select>
               </div>
             </div>
@@ -45,7 +45,14 @@
 
       <div class="ui segment" style="max-height:500px;overflow:auto;">
         <div class="ui divided items">
-          <div class="item" v-for="place in places" :key="place.id">
+          <div
+            class="item"
+            v-for="(place, index) in places"
+            :key="place.id"
+            @click="showInfoWindow(index)"
+            :class="{'active' : activeIndex === index}"
+            style="padding: 10px;"
+          >
             <div class="content">
               <div class="header">{{ place.name }}</div>
               <div class="meta">{{ place.vicinity }}</div>
@@ -72,7 +79,9 @@ export default {
       lng: 0,
       type: "",
       radius: "",
-      places: []
+      places: [],
+      markers: [],
+      activeIndex: -1
     };
   },
 
@@ -189,6 +198,8 @@ export default {
           map: map
         });
 
+        this.markers.push(marker);
+
         google.maps.event.addListener(marker, "click", () => {
           const URL = `https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/details/json?key=${this.apiKey}&place_id=${placeID}`;
 
@@ -215,6 +226,10 @@ export default {
             });
         });
       }
+    },
+    showInfoWindow(index) {
+      this.activeIndex = index;
+      new google.maps.event.trigger(this.markers[index], "click");
     }
   }
 };
@@ -251,5 +266,8 @@ export default {
   right: 0;
   bottom: 0;
   left: 0;
+}
+.active {
+  background: #ff5a5f !important;
 }
 </style>
