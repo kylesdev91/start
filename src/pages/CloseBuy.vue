@@ -260,14 +260,15 @@ export default {
   font-size: 16px;
 }
 
+.active {
+  background: #ff5a5f !important;
+}
+
 #map {
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
   left: 0;
-}
-.active {
-  background: #ff5a5f !important;
 }
 </style>
